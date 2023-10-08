@@ -1,24 +1,39 @@
-import React, { Component } from "react";
+import React, { Component, ReactNode } from "react";
 import { ToastContainer, toast } from "react-toastify";
-
 import "react-toastify/dist/ReactToastify.css";
 
-const MyContext = React.createContext();
+interface MyContextProps {
+  state: {
+    stage: number;
+    players: string[];
+    result: string;
+  };
+  addPlayer: (name: string) => void;
+  removePlayer: (id: number) => void;
+  nextStage: () => void;
+  getLooser: () => void;
+  reset: () => void;
+}
 
-class MyProvider extends Component {
-  state = {
+const MyContext = React.createContext<MyContextProps | undefined>(undefined);
+
+class MyProvider extends Component<
+  { children: ReactNode },
+  MyContextProps["state"]
+> {
+  state: MyContextProps["state"] = {
     stage: 1,
     players: [],
     result: "",
   };
 
-  addPlayerHandler = (name) => {
+  addPlayerHandler: MyContextProps["addPlayer"] = (name) => {
     this.setState((prevState) => ({
       players: [...prevState.players, name],
     }));
   };
 
-  removePlayerHandler = (id) => {
+  removePlayerHandler: MyContextProps["removePlayer"] = (id) => {
     let newArray = this.state.players;
     newArray.splice(id, 1);
     this.setState({
